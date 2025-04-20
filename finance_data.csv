@@ -30,4 +30,8 @@ date,amount,category,description
 29-07-2024,1200,Income,Salary
 30-07-2024,45,Expense,Stationery
 31-07-2024,190,Expense,Utilities
-20-07-2023,124.0,Expense,Groceries01-09-2023,1000.0,Expense,i
+20-07-2023,124,Expense,Groceries
+01-09-2023,1000,Expense,Investment
+"01-08-2024","12000.0","Expense","Books"
+2025-04-01,10008,Expense,Fees
+2025-04-03,10000,Expense,Shopping

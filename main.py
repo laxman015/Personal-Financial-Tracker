@@ -1,10 +1,8 @@
 import pandas as pd
 import csv
 from datetime import datetime
-from data_entry import get_amount, get_category, get_date, get_descriptipn
+from data_entry import get_amount, get_category, get_date, get_description  # fixed typo
 import matplotlib.pyplot as plt
-
-
 class CSV:
     CSV_FILE = "finance_data.csv"
     COLUMNS = ["date", "amount", "category", "description"]
@@ -27,13 +25,19 @@ class CSV:
             "description": description,
         }
         with open(cls.CSV_FILE, "a", newline="") as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=cls.COLUMNS)
+            writer = csv.DictWriter(csvfile, fieldnames=cls.COLUMNS, quoting=csv.QUOTE_ALL)
             writer.writerow(new_entry)
         print("Entry added successfully")
 
     @classmethod
     def get_transactions(cls, start_date, end_date):
-        df = pd.read_csv(cls.CSV_FILE)
+        try:
+            df = pd.read_csv(cls.CSV_FILE)
+        except pd.errors.ParserError as e:
+            print("Error reading CSV file:", e)
+            print("Please check for formatting issues in the CSV.")
+            return pd.DataFrame()
+
         df["date"] = pd.to_datetime(df["date"], format=CSV.FORMAT)
         start_date = datetime.strptime(start_date, CSV.FORMAT)
         end_date = datetime.strptime(end_date, CSV.FORMAT)
@@ -75,11 +79,15 @@ def add():
     )
     amount = get_amount()
     category = get_category()
-    description = get_descriptipn()
+    description = get_description()  # fixed typo
     CSV.add_entry(date, amount, category, description)
 
 
 def plot_transactions(df):
+    if df.empty:
+        print("No data to plot.")
+        return
+
     df.set_index("date", inplace=True)
 
     income_df = (
@@ -119,7 +127,7 @@ def main():
             start_date = get_date("Enter the start date (dd-mm-yyyy): ")
             end_date = get_date("Enter the end date (dd-mm-yyyy): ")
             df = CSV.get_transactions(start_date, end_date)
-            if input("Do you want to see a plot? (y/n) ").lower() == "y":
+            if not df.empty and input("Do you want to see a plot? (y/n) ").lower() == "y":
                 plot_transactions(df)
         elif choice == "3":
             print("Exiting...")
